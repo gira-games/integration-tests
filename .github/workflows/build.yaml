@@ -7,12 +7,11 @@ on:
 
 jobs:
   api:
-    name: Build ${{ matrix.service }} with Go ${{ matrix.go-version }}
+    name: Build Integration tests with Go ${{ matrix.go-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         go-version: [1.15, 1.14, 1.13]
-        service: ['api', 'front-end']
 
     steps:
     - uses: actions/checkout@v1
@@ -20,6 +19,6 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go-version }}
-    - name: Build ${{ matrix.service }} service
+    - name: Build Integration tests
       run: |
-        go build ./cmd/${{ matrix.service }}
+        go build ./cmd/integrationtests
