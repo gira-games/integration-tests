@@ -5,8 +5,8 @@ package integrationtests
 import (
 	"testing"
 
-	"github.com/asankov/gira/pkg/client"
-	"github.com/asankov/gira/pkg/models"
+	"github.com/gira-games/client/pkg/client"
+
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,13 +15,13 @@ import (
 func TestCreateAndGetAll(t *testing.T) {
 	cl := setup(t)
 
-	user, err := cl.CreateUser(&models.User{
+	user, err := cl.CreateUser(&client.CreateUserRequest{
 		Email:    "games@test.com",
 		Password: "password",
 	})
 	require.NoError(t, err)
 
-	loginResp, err := cl.LoginUser(&models.User{
+	loginResp, err := cl.LoginUser(&client.LoginUserRequest{
 		Email:    user.Email,
 		Password: "password",
 	})
@@ -32,23 +32,25 @@ func TestCreateAndGetAll(t *testing.T) {
 	batmanGame := createGame(t, cl, "Batman", token)
 	acGame := createGame(t, cl, "AC", token)
 
-	games, err := cl.GetGames(token, client.NoOptions)
+	res, err := cl.GetGames(&client.GetGamesRequest{Token: token})
 	require.NoError(t, err)
 
-	require.Equal(t, 2, len(games))
-	require.Contains(t, games, batmanGame)
-	require.Contains(t, games, acGame)
+	require.Equal(t, 2, len(res.Games))
+	require.Contains(t, res.Games, batmanGame)
+	require.Contains(t, res.Games, acGame)
 }
 
-func createGame(t *testing.T, cl *client.Client, name, token string) *models.Game {
-	game, err := cl.CreateGame(&models.Game{
-		Name: name,
-	}, token)
+func createGame(t *testing.T, cl *client.Client, name, token string) *client.Game {
+	res, err := cl.CreateGame(&client.CreateGameRequest{
+		Token: token,
+		Game: &client.Game{
+			Name: name,
+		},
+	})
 	require.NoError(t, err)
-	require.NotEmpty(t, game.ID)
-	require.Empty(t, game.Franchise)
-	require.Empty(t, game.FranshiseID)
-	require.Equal(t, name, game.Name)
+	require.NotEmpty(t, res.Game.ID)
+	require.Empty(t, res.Game.FranshiseID)
+	require.Equal(t, name, res.Game.Name)
 
-	return game
+	return res.Game
 }

@@ -5,7 +5,7 @@ package integrationtests
 import (
 	"testing"
 
-	"github.com/asankov/gira/pkg/models"
+	"github.com/gira-games/client/pkg/client"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,33 +15,31 @@ import (
 func TestUserLifecycle(t *testing.T) {
 	cl := setup(t)
 
-	user, err := cl.CreateUser(&models.User{
+	user, err := cl.CreateUser(&client.CreateUserRequest{
 		Email:    "integration@test.com",
 		Password: "pass",
 	})
 	require.NoError(t, err)
 	require.Equal(t, "integration@test.com", user.Email)
 	require.Equal(t, "integration@test.com", user.Username, "the username should be the same as the email by default")
-	require.Empty(t, user.Password, "the server should not return the user password")
 
-	resp, err := cl.LoginUser(&models.User{
+	resp, err := cl.LoginUser(&client.LoginUserRequest{
 		Email:    "integration@test.com",
 		Password: "pass",
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, resp.Token)
 
-	user, err = cl.GetUser(resp.Token)
+	getUserResp, err := cl.GetUser(&client.GetUserRequest{Token: resp.Token})
 	require.NoError(t, err)
-	require.Equal(t, "integration@test.com", user.Email)
-	require.Equal(t, "integration@test.com", user.Username, "the username should be the same as the email by default")
-	require.Empty(t, user.Password, "the server should not return the user password")
+	require.Equal(t, "integration@test.com", getUserResp.Email)
+	require.Equal(t, "integration@test.com", getUserResp.Username, "the username should be the same as the email by default")
 
-	err = cl.LogoutUser(resp.Token)
+	err = cl.LogoutUser(&client.LogoutUserRequest{Token: resp.Token})
 	require.NoError(t, err)
 
-	user, err = cl.GetUser(resp.Token)
-	require.Nil(t, user)
+	getUserResp, err = cl.GetUser(&client.GetUserRequest{Token: resp.Token})
+	require.Nil(t, getUserResp)
 	// TODO: assert error once we start returning proper errors
 	require.Error(t, err)
 }

@@ -5,6 +5,25 @@ networks:
     driver: bridge
 
 services:
+  api:
+    # TODO: fill properly
+    image: ghcr.io/asankov/gira/gira-api:latest
+    depends_on:
+      - postgres
+    ports:
+      - "21666:21666"
+    expose:
+      - "21666"
+    networks:
+      - integration-tests-network
+    environment:
+      - PORT=21666
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=gira
+      - DB_PASS=password
+      - DB_NAME=gira
+      - SESSION_SECRET="sessi0nsecRE7"
   postgres:
     image: postgres:latest
     ports:
