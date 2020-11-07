@@ -21,4 +21,4 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Run the tests with Go ${{ matrix.go-version }}
       run: |
-        make integration_tests
+        go test -v ./...
