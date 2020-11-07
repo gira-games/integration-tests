@@ -1,20 +1,17 @@
-## Gira
+## Gira - integration tests
 
-[![Coverage Status](https://coveralls.io/repos/github/asankov/gira/badge.svg?branch=main&service=github)](https://coveralls.io/github/asankov/gira?branch=main)
-
-Gira is like Jira, but for tracking your video games progress
+This are the integration tests of the Gira project. They are self-contained. They can run stand-alone, and will be able to download and start everything they need.
 
 ### How to run
-Via Docker compose:
 ```
- $ docker-compose -f docker/docker-compose.yml up
+$ go test ./...
 ```
-Then, initialize the database:
-```
-$ go get -u github.com/pressly/goose/cmd/goose
-$ goose -dir sql/ postgres 'host=localhost port=5432 user=gira dbname=gira password=password sslmode=disable' up
-```
-Now you should be able to open the browser on [localhost:4000](localhost:4000) and see the UI.
+This will spin up a PostgreSQL DB, and an API server, and will use them to run the scenarious defined in the test files.
 
+You can also:
+```
+$ go test ./... -api-image my-repo/my-gira-api-image -api-version v1.0.0 -postgres-version 12
+```
+To use custom version and images.
 ### License
 This work is licensed under MIT license. For more info see [LICENSE.md](LICENSE.md)
