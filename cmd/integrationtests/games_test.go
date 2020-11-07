@@ -1,6 +1,4 @@
-// +build integration_tests
-
-package integrationtests
+package main
 
 import (
 	"testing"
@@ -10,11 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestCreateAndGetAll creates a user, logs in, then creates two games
+// testCreateAndGetAll creates a user, logs in, then creates two games
 // and fetches them.
-func TestCreateAndGetAll(t *testing.T) {
-	cl := setup(t)
-
+func testCreateAndGetAll(t *testing.T, cl *client.Client) {
 	user, err := cl.CreateUser(&client.CreateUserRequest{
 		Email:    "games@test.com",
 		Password: "password",

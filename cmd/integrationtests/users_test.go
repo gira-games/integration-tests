@@ -1,6 +1,4 @@
-// +build integration_tests
-
-package integrationtests
+package main
 
 import (
 	"testing"
@@ -9,12 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestUserLifecycle test the lifecycle of the user.
+// testUserLifecycle test the lifecycle of the user.
 // It creates a user, logs in, gets user info via the token, received on login,
 // logs out, and then checks that after logging out the token has been invalidated.
-func TestUserLifecycle(t *testing.T) {
-	cl := setup(t)
-
+func testUserLifecycle(t *testing.T, cl *client.Client) {
 	user, err := cl.CreateUser(&client.CreateUserRequest{
 		Email:    "integration@test.com",
 		Password: "pass",
